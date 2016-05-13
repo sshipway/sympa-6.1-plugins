@@ -1,0 +1,48 @@
+<!-- $Id: tracking_csv.tt2  $ -->
+<div class="block">
+
+[% IF is_owner || is_listmaster || is_editor %]
+[% IF list_conf.merge_feature == 'on' %]
+[% USE Tracking;
+   SET track_msgid  = cap.shift;
+   SET track_linkid = cap.shift;
+   SET errmsg = '';
+-%]
+
+<textarea name="export" cols="80" rows="20" onfocus="this.select()" onmousedown="this.select()" onmouseup="return false" autofocus="true" readonly="true" >
+[% IF track_msgid -%]
+[% errmsg = errmsg _ Tracking.clicks(track_msgid,track_linkid) -%]
+"Recipient","Clicks","First Click"
+[% FOREACH click = click_list -%]
+"[% click.rcpt %]",[% click.count %],"[% click.first %]"
+[% END -%]
+[% ELSE -%]
+[% errmsg = errmsg _ Tracking.messages -%]
+"Subject","Posting time","Messages"
+[% FOREACH msg = message_list -%]
+"[% msg.subject %]","[% msg.sent %]",[% msg.num %]
+[% END -%]
+[% END -%]
+</textarea><br />
+
+[% IF errmsg and errmsg != '' %]
+<div><p class="retraitita">
+<B>ERROR:</B><br />[% errmsg %]<br /><br /><B>SQL:</B><br />[% message_sql %]
+</p></div>
+[% END %]
+
+[% ELSE %]
+<div><p class="retraitita">
+This list does not have the Merge Feature enabled, and so cannot do tracking.
+</p></div>
+[% END %]
+[% ELSE %]
+<div><p class="retraitita">
+You do not have sufficient rights to view tracking data.
+</p></div>
+[% END %]
+<br />
+<a class="actionMenuLinks" href="[% path_cgi %]/lca/tracking/[% list %]/[% track_msgid %]/[% track_linkid %]">Return</a>
+
+</div>
+<!-- end tracking_csv.tt2 -->

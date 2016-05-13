@@ -1,0 +1,13 @@
+##### This line replaces the existing test for action == 'admin'
+
+[% IF action == 'admin' || action_type == 'admin' || action == 'editfile' || custom_action == 'tracking' %]
+
+##### Insert this piece in the tabs list for list action == 'admin'
+
+    [% IF list_conf.merge_feature == 'on' %]
+      [% IF action == 'lca' %]
+        [% IF custom_action == 'tracking' %][% SET class = 'MainMenuLinksCurrentPage' %][% ELSE %][% SET class = 'MainMenuLinks' %][% END %]
+      [% ELSE %][% SET class = 'MainMenuLinks' %][% END %]
+      <li class="[% class %]"><a  href="[% path_cgi %]/lca/tracking/[% list %]" >[%|loc%]Tracking[%END%]</a></li>
+    [% END %]
+

@@ -1,0 +1,21 @@
+diff -c -r sympa-6.1.11/src/lib/Bulk.pm sympa-6.1.11.mod/src/lib/Bulk.pm
+*** sympa-6.1.11/src/lib/Bulk.pm        2012-04-20 01:59:43.000000000 +1200
+--- sympa-6.1.11.mod/src/lib/Bulk.pm    2013-11-18 14:15:19.563367286 +1300
+***************
+*** 266,271 ****
+--- 266,279 ----
+        return undef;
+      }
+
++ # SJS : Add headers to stash
++     $data->{'headers'} = {} if(!defined $data->{'headers'});
++     my $headers = $entity->head;
++     foreach my $key ( qw/subject x-originating-ip message-id date x-original-to from to thread-topic content-type/ ) {
++         $data->{'headers'}{$key} = $headers->get($key) if($headers->count($key));
++     }
++ # END
++
+      my $body;
+      if(defined $entity->bodyhandle){
+        $body      = $entity->bodyhandle->as_string;
+

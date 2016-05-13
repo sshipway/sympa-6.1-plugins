@@ -1,0 +1,45 @@
+Posting Rate Limiting modules for Sympa send scenario
+
+Steve Shipway, University of Auckland, 2014
+s.shipway@auckland.ac.nz
+steve@steveshipway.org
+
+VERSION 0.1
+
+Here is my solution to provide message rate limiting on a per-list or per-subscriber-per-list basis.
+
+It works by adding a custom condition for send scenari that allows you to reject a message if a given subscriber has sent more than a given number of messages that hour.  Thanks to the suggestion from Giorgio, you can work around the issue of caching, though it may be more memory-efficient to simply disable the custom check caching by changing the verify_custom subroutine in the  lib/Scenario.pm file like this:
+
+---line 1273, Scenario.pm----
+        return undef unless defined $res;
+
+# Comment out these three lines
+#        $persistent_cache{'named_filter'}{$condition}{$filter}{'value'} = ($res == 1 ? 1 : 0);
+#        $persistent_cache{'named_filter'}{$condition}{$filter}{'update'} = time;
+#        return $persistent_cache{'named_filter'}{$condition}{$filter}{'value'};
+# Add this one
+        return $res;
+}
+
+The custom condition creates a new table rate_limit in the Sympa database which is used to hold subscriber/list posting counts.  This should not need to be pruned except with public lists which could attract spam.
+
+You use a custom scenario line similar to this to make it work:
+
+  CustomCondition::rate_limit([listname],[sender],10,[header->Message-ID]) smtp,dkim,smime,md5 -> reject(tt2=rate_limit)
+
+The first two parameters are list name and sender; they are used to form the key for counting.  To make a per-list count, use .. instead of [sender].  If you have multiple robots then replace [listname] with [listbame]@[robot].  The third parameter is the maximum messages per clock hour (reset count at top of hour).  The fourth parameter is Giorgio.s trick to effectively disable the Custom Condition caching for this function.
+
+HOW TO INSTALL
+1.	Copy rate_limit.pm into the $SYMPAETC/custom_conditions directory (create it if you have to).  This makes the new function available to scenari.
+2.	Copy rate_limit.tt2 into the $SYMPAETC/mail_tt2 directory (create it if you have to).  This defines a custom notification message for messages rejected due to rate limiting.  (If this mod is merged into the main branch, I would expect this to be merged into authorization_reject.tt2)
+3.	Create a Custom Scenario, such as $SYMPAETC/scenari/send.ratelimit which has the custom condition.  An example is provided.  Note how we try and exclude all non-posters before calling the Custom Condition in order to minimise table size and to prevent per-list counts from being incorrect.
+4.	Configure your list to use this custom scenario, and all should be fine.
+
+Caveats:
+1.	Only tested with Sympa 6.1.19
+2.	Only tested with MySQL, likely doesn.t work with other databases
+3.	Rate_limit table may grow large if scenario used on lists permitting public posting due to spam attacks.
+4.	Condition limits per hour, resetting count at top of hour (IE, at 12:00, 1:00, etc).  If you want per-day counts, modify the $WINDOW setting in the plugin.  Note that if you make this daily, it will reset the count at midnight UCT regardless of your local timezone.
+
+Please provide feedback.
+

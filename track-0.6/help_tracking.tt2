@@ -1,0 +1,43 @@
+<!-- $Id: help_tracking.tt2  $ -->
+
+
+
+<h2 class="block">[%|helploc%]Message Tracking documentation[%END%]</h2>
+<P>
+To use the Tracking module, you first need to enable the <b>merge_feature</b> on your list.
+</P><P>
+When the merge_feature is enabled, the <b>Tracking</b> tab will be displayed in the Admin web interface.  This will display
+the details for any tracked messages.
+</P><P>
+To send a tracked message, you need to add three specific items of TT2 code to the message.
+</P>
+<H3>Add the Plugin</H3>
+<p>In all cases, you should start the message by including the Tracking plugin.</p>
+<p class="retraitita">
+[ % USE Tracking -% ]
+</p>
+<H3>Add the Read-track item</H3>
+<p>This should be done once (and only once) in the message, at any point after the USE statement.  Generally, you should place it somewhere right at the end of the message.</p>
+<p class="retraitita">
+[ % Tracking.base -% ]
+</p>
+<H3>Indicate trackable links, if any</H3>
+<p>This is optional, and can be done any number of times after the USE statement.  You should not place any other FILTER, INCLUDE or PROCESS directives within the trackable section.</p>
+<p class="retraitita">
+[ % FILTER Tracking -% ]<br />
+... place your message and any embedded HTML links in here ...<br />
+[ % END -% ]
+</p>
+<H3>Example</H3>
+<p class="retraitita">
+[ % USE Tracking -% ]<br />
+Hello, [ % user.gecos % ]!<br />
+[ % FILTER Tracking -% ]<br />
+This is a wonderful offer for you to purchase.  Simply click &lt;A href=http://spammy.com/&gt;here&lt;/A&gt; to buy our all-new Chocolate Fireguards!<br />
+[ % END -% ]<br />
+&lt;hr&gt;<br />
+To be removed from this list, click &lt;A href=[ % wwsympa_url % ]/auto_signoff/[ % listname % ]/[ % user.escaped_email % ]&gt;here&lt;/A&gt;<br />
+[ % Tracking.base -% ]
+</p>
+In this example, the <b>spammy.com</b> link is tracked, but the unsubscribe link is not.  It also keeps track of message views, thanks to the <b>Tracking.base</b> at the end.  Note that only HTML links (IE, the HREF in an A tag) are modified and tracked; a URL simply placed in text is not modified.
+<!-- end help_tracking.tt2 -->

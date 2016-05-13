@@ -1,0 +1,61 @@
+Whitelist/Modlist Extension for Sympa
+
+Steve Shipway, University of Auckland, 2012
+
+This adds Whitelist and Modlist functionality to Sympa, by using an included
+scenario, and a TT2 module to hold the required Perl code.
+
+Installing:
+
+NOTE: Your installation may use different directories to hold the various
+files.  Change the paths to what is appropriate for your system.
+
+1. Copy UOA_whitelist.pm to /usr/share/sympa/lib/Template/Plugin , making the
+   necessary subdirectories if you have to.  This is the sympa 'lib' path,
+   where you find the various List.pm and so on.
+   This module extends the TT2 parser to add the new functions to handle
+   managing the whitelist and modlist files.
+
+2. Create default empty whitelist.txt and modlist.txt files in 
+   /etc/sympa/search_filters (or wherever your Sympa search_filters path is).
+   These must exist as a default for lists that do not have a defined whitelist
+   or modlist.
+
+3. Install the whitelist.tt2 and modlist.tt2 into /etc/sympa/web_tt2
+   These are the admin pages for the whitelist and modlist.  They go into
+   your web_tt2 customisation directory.
+
+4. OPTIONALLY copy modindex.tt2 into /etc/sympa/web_tt2.  This adds buttons
+   to the moderation page for 'add to whitelist' and 'add to modlist'.
+
+5. Update nav.tt2 on your system.  Copy your default file
+   /usr/share/sympa/defaults/web_tt2/nav.tt2 into /etc/sympa/web_tt2 and then
+   edit it to add the 'Whitelist' and 'Modlist' tabs.  The supplied nav.tt2
+   should work with Sympa 6.1.x but if you have already customised nav.tt2
+   you should make sure to add the necessary Whitelist and Modlist parts.
+
+6. Copy include.send.header into your /etc/sympa/scenari directory.  This
+   activates the Whitelist and Modlist on all lists, though until you define
+   some entries, all lists will get the default empty files you set up in
+   step 2.
+
+7. Restart the Sympa daemons, and restart your web server.  This will pick up 
+   the changes.
+
+8. TEST!  Choose a list and verify that the Whitelist and Modlist tabs appear 
+   in the admin page.  Try adding an entry to the whitelist and verify that 
+   it works and produces no errors.
+
+Caveats:
+
+The new white/modlist admin pages are in English and do not have translations.
+You might be able to update them yourself to help with this.
+
+Make sure file ownerships are correct.
+
+The future:
+
+This patch has been submitted to the Sympa team as a proposed upgrade, and it 
+is likely to be added to Ver 6.2.x eventually.  For now, this solution works
+well.
+

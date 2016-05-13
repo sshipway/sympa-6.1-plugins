@@ -1,0 +1,9 @@
+From: [% fromlist %]
+Subject: [% FILTER qencode %][%|loc%]Your message to [% list.name %] has been rejected due to volume.[%END%][%END%]
+
+[%|loc(list.name,list.host)%]Your message for list %1@%2 has been rejected as you sent too many messages this hour.[%END%]
+
+[%|loc(subject)%](Subject of your mail: %1)[%END%]
+
+[%|loc(list.name)%]For more information on list %1 usage:[%END%]
+[% conf.wwsympa_url %]/info/[% list.name %]

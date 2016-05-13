@@ -1,0 +1,16 @@
+Sympa Message Tracking System
+Version 0.1
+
+Steve Shipway, steve@steveshipway.org
+Nov 2013
+
+Summary
+-------
+This is a mod for Sympa.  It is based on Sympa 6.1.11 but should work on any of the 6.x branch.
+
+It provides functionality allowing you to track message views and link click-throughs on messages sent via a Mail-Merge-enabled Sympa mailing list.
+
+This is an initial version, so more reporting functionality should be forthcoming in later versions.
+
+This requires a small patch to the Sympa Bulk.pm module; hopefully, in later versions of Sympa, this will no longer be necessary.
+
